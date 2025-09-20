@@ -2,6 +2,9 @@ package com.HIRFA.HIRFA.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,21 +14,19 @@ public class Cooperative {
     @GeneratedValue
     public UUID cooperativeId;
 
-    private String nom;
-    private String prenom;
-
     @Column(unique = true)
     private String email;
 
     @Column(unique = true)
-    private String username;
+    private String brand;
 
     private String telephone;
     private String motDePasse;
+    @CreationTimestamp
     private LocalDateTime dateCreation;
     private LocalDateTime derniereConnexion;
     private String description;
-    private Boolean statut;
+    private Boolean confirmed;
     private String adresse;
     private String licence;
     private Boolean statutVerification;
@@ -38,22 +39,6 @@ public class Cooperative {
         this.cooperativeId = cooperativeId;
     }
 
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -62,12 +47,12 @@ public class Cooperative {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getTelephone() {
@@ -102,14 +87,6 @@ public class Cooperative {
         this.derniereConnexion = derniereConnexion;
     }
 
-    public Boolean getStatut() {
-        return statut;
-    }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -124,6 +101,14 @@ public class Cooperative {
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
+    }
+
+    public Boolean getLConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 
     public String getLicence() {

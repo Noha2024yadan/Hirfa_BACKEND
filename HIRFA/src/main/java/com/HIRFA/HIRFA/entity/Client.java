@@ -1,7 +1,11 @@
 package com.HIRFA.HIRFA.entity;
 
+/*classe java qui represente ne table dans la base de donnees */
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
 
@@ -9,8 +13,10 @@ import jakarta.persistence.*;
 @Table
 public class Client {
     @Id
-    @GeneratedValue
-    public UUID clientId;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(updatable = false, nullable = false)
+    private UUID clientId;
 
     private String nom;
     private String prenom;
@@ -23,10 +29,11 @@ public class Client {
 
     private String telephone;
     private String motDePasse;
+    @CreationTimestamp
     private LocalDateTime dateCreation;
     private LocalDateTime derniereConnexion;
     private String adresse;
-    private Boolean statut;
+    private Boolean confirmed;
 
     public UUID getClientId() {
         return clientId;
@@ -100,14 +107,6 @@ public class Client {
         this.derniereConnexion = derniereConnexion;
     }
 
-    public Boolean getStatut() {
-        return statut;
-    }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
-    }
-
     public String getAdresse() {
         return adresse;
     }
@@ -115,4 +114,13 @@ public class Client {
     public void setAdresse(String adresse) {
         this.adresse = adresse;
     }
+
+    public Boolean getLConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
 }
