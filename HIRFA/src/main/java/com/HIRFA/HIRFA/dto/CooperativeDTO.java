@@ -3,34 +3,16 @@ package com.HIRFA.HIRFA.dto;
 import jakarta.validation.constraints.Email;
 
 public class CooperativeDTO {
-    private String nom;
-    private String prenom;
     @Email
     private String email;
-    private String username;
+    private String brand;
     private String telephone;
     private String adresse;
     private String motDePasse;
     private String description;
     private String licence;
     private Boolean statutVerification;
-
-    // Getters & setters
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
+    private Boolean confirmed;
 
     public String getEmail() {
         return email;
@@ -40,12 +22,12 @@ public class CooperativeDTO {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getTelephone() {
@@ -94,6 +76,14 @@ public class CooperativeDTO {
 
     public void setStatutVerification(Boolean statutVerification) {
         this.statutVerification = statutVerification;
+    }
+
+    public Boolean getLConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 }
 /*

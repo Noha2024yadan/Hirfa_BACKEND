@@ -3,6 +3,9 @@ package com.HIRFA.HIRFA.service;
 import com.HIRFA.HIRFA.dto.ClientDTO;
 import com.HIRFA.HIRFA.entity.Client;
 import com.HIRFA.HIRFA.repository.ClientRepository;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,11 +20,17 @@ public class ClientService {
     }
 
     public Client updateClient(UUID clientId, ClientDTO dto) {
-        // 🔍 Récupération du client
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUsername = auth.getName();
+
         Client existingClient = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client introuvable"));
 
-        // ✅ Mise à jour partielle (PATCH)
+        if (!existingClient.getUsername().equals(loggedInUsername)) {
+            throw new RuntimeException("Vous ne pouvez modifier que votre profil");
+        }
+
         if (dto.getNom() != null)
             existingClient.setNom(dto.getNom());
         if (dto.getPrenom() != null)

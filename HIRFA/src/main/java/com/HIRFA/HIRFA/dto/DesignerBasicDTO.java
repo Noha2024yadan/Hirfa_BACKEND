@@ -4,18 +4,16 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.Email;
 
-public class DesignerDTO {
+public class DesignerBasicDTO {
     private String nom;
     private String prenom;
     @Email
     private String email;
     private String username;
     private String telephone;
-    private String motDePasse;
     private String portfolio;
     private String specialites;
     private BigDecimal tarifs;
-    private Boolean confirmed;
 
     public String getNom() {
         return nom;
@@ -57,14 +55,6 @@ public class DesignerDTO {
         this.telephone = telephone;
     }
 
-    public String getMotDePasse() {
-        return motDePasse;
-    }
-
-    public void setMotDePasse(String motDePasse) {
-        this.motDePasse = motDePasse;
-    }
-
     public String getPortfolio() {
         return portfolio;
     }
@@ -87,13 +77,5 @@ public class DesignerDTO {
 
     public void setTarifs(BigDecimal tarifs) {
         this.tarifs = tarifs;
-    }
-
-    public Boolean getLConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
     }
 }

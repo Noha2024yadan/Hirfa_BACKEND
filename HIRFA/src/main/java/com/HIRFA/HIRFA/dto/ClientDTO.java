@@ -13,7 +13,6 @@ public class ClientDTO {
     private String motDePasse;
     private Boolean confirmed;
 
-    // Getters & setters
     public String getNom() {
         return nom;
     }

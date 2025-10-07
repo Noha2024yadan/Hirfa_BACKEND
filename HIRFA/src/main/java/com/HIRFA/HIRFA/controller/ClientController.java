@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("//api/client/profile")
 public class ClientController {
 
     private final ClientService clientService;
@@ -17,7 +17,6 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    // PATCH pour mise à jour partielle
     @PatchMapping("/{id}")
     public Client updateClient(@PathVariable UUID id, @RequestBody ClientDTO dto) {
         return clientService.updateClient(id, dto);

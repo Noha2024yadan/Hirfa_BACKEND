@@ -1,4 +1,4 @@
-package com.HIRFA.HIRFA.forgetpassword;
+package com.HIRFA.HIRFA.service;
 
 public enum UserType {
     CLIENT,

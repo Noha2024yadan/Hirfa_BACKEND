@@ -13,7 +13,8 @@ public class Designer {
     @Id
     @GeneratedValue
     public UUID designerId;
-
+     private String nom;
+    private String prenom;
     @Column(unique = true)
     private String email;
 
@@ -37,7 +38,21 @@ public class Designer {
     public void setDesignerId(UUID designerId) {
         this.designerId = designerId;
     }
+     public String getNom() {
+        return nom;
+    }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
     public String getEmail() {
         return email;
     }

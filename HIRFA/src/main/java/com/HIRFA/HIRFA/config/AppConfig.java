@@ -1,4 +1,4 @@
-package com.HIRFA.HIRFA.forgetpassword;
+package com.HIRFA.HIRFA.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
