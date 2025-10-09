@@ -1,32 +1,74 @@
 package com.HIRFA.HIRFA.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class User implements UserDetails {
+    public enum UserType {
+        CLIENT, DESIGNER, COOPERATIVE, ADMIN
+    }
+
     @Id
     @GeneratedValue
-    public UUID userId;
+    protected UUID userId;
 
-    private String nom;
-    private String prenom;
-
-    @Column(unique = true)
-    private String email;
+    protected String nom;
+    protected String prenom;
 
     @Column(unique = true)
-    private String username;
+    protected String email;
 
-    private String telephone;
-    private String motDePasse;
-    private LocalDateTime dateCreation;
-    private LocalDateTime derniereConnexion;
+    @Column(unique = true, nullable = false)
+    protected String username;
 
-    private Boolean statut;
+    @Column(nullable = false)
+    protected String telephone;
+
+    @Column(nullable = false)
+    protected String motDePasse;
+
+    @Column(nullable = false, updatable = false)
+    protected LocalDateTime dateCreation = LocalDateTime.now();
+
+    protected LocalDateTime derniereConnexion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false, insertable = false, updatable = false)
+    protected UserType userType;
+
+    @Column(nullable = false)
+    protected boolean enabled = true;
+
+    @Column(nullable = false)
+    private boolean accountNonExpired = true;
+
+    @Column(nullable = false)
+    private boolean accountNonLocked = true;
+
+    @Column(nullable = false)
+    private boolean credentialsNonExpired = true;
+
+    @Column
+    private Boolean statut = true;
+
+    public Boolean getStatut() {
+        return statut;
+    }
+
+    public void setStatut(Boolean statut) {
+        this.statut = statut;
+    }
 
     public UUID getUserId() {
         return userId;
@@ -100,12 +142,62 @@ public abstract class User {
         this.derniereConnexion = derniereConnexion;
     }
 
-    public Boolean getStatut() {
-        return statut;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("RO_" + userType.name()));
     }
 
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
+    @Override
+    public String getPassword() {
+        return motDePasse;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isActive() {
+        return statut != null && statut;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
     }
 
 }

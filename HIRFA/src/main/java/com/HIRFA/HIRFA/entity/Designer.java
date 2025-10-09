@@ -6,110 +6,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table
-public class Designer {
-    @Id
-    @GeneratedValue
-    public UUID designerId;
-
-    private String nom;
-    private String prenom;
-
-    @Column(unique = true)
-    private String email;
-
-    @Column(unique = true)
-    private String username;
-
-    private String telephone;
-    private String motDePasse;
-    private LocalDateTime dateCreation;
-    private LocalDateTime derniereConnexion;
+@Table(name = "designers")
+@PrimaryKeyJoinColumn(name = "user_id")
+public class Designer extends User {
     private String portfolio;
     private String specialites;
-    private Boolean statut;
     private BigDecimal tarifs;
-
-    public UUID getDesignerId() {
-        return designerId;
+    
+    public Designer() {
+        this.setUserType(UserType.DESIGNER);
     }
-
-    public void setDesignerId(UUID designerId) {
-        this.designerId = designerId;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public String getMotDePasse() {
-        return motDePasse;
-    }
-
-    public void setMotDePasse(String motDePasse) {
-        this.motDePasse = motDePasse;
-    }
-
-    public LocalDateTime getDateCreation() {
-        return dateCreation;
-    }
-
-    public void setDateCreation(LocalDateTime dateCreation) {
-        this.dateCreation = dateCreation;
-    }
-
-    public LocalDateTime getDerniereConnexion() {
-        return derniereConnexion;
-    }
-
-    public void setDerniereConnexion(LocalDateTime derniereConnexion) {
-        this.derniereConnexion = derniereConnexion;
-    }
-
-    public Boolean getStatut() {
-        return statut;
-    }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
-    }
-
+    
+    // Designer-specific fields
     public String getPortfolio() {
         return portfolio;
     }
@@ -132,5 +40,31 @@ public class Designer {
 
     public void setTarifs(BigDecimal tarifs) {
         this.tarifs = tarifs;
+    }
+    
+    // Override UserDetails interface methods
+    @Override
+    public UUID getUserId() {
+        return super.getUserId();
+    }
+    
+    @Override
+    public String getMotDePasse() {
+        return super.getMotDePasse();
+    }
+    
+    @Override
+    public UserType getUserType() {
+        return UserType.DESIGNER;
+    }
+    
+    @Override
+    public boolean isActive() {
+        return super.isActive();
+    }
+    
+    @Override
+    public void setDerniereConnexion(LocalDateTime now) {
+        super.setDerniereConnexion(now);
     }
 }

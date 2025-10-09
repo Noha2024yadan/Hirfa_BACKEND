@@ -1,20 +1,18 @@
-package com.HIRFA.HIRFA.entity;
+package com.HIRFA.HIRFA.dto;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "cooperatives")
-@PrimaryKeyJoinColumn(name = "user_id")
-public class Cooperative extends User {
+public class CooperativeRegistrationDto extends BaseUserRegistrationDto {
+
     private String description;
+
+    @NotBlank(message = "Address is required")
     private String adresse;
+
+    @NotBlank(message = "Licence number is required")
     private String licence;
-    private String statutVerification;
 
-    public Cooperative() {
-        this.setUserType(UserType.COOPERATIVE);
-    }
-
+    // Getters and Setters
     public String getDescription() {
         return description;
     }
@@ -39,11 +37,8 @@ public class Cooperative extends User {
         this.licence = licence;
     }
 
-    public String getStatutVerification() {
-        return statutVerification;
-    }
+    public Object getConfirmMotDePasse() {
 
-    public void setStatutVerification(String statutVerification) {
-        this.statutVerification = statutVerification;
+        throw new UnsupportedOperationException("Unimplemented method 'getConfirmMotDePasse'");
     }
 }

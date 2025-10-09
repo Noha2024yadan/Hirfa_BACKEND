@@ -1,91 +1,41 @@
 package com.HIRFA.HIRFA.entity;
 
+import jakarta.persistence.*;
 import java.util.UUID;
 
-import jakarta.persistence.*;
-
 @Entity
-@Table
-public class Admin {
-    @Id
-    @GeneratedValue
-    public UUID adminId;
-
-    private String nom;
-    private String prenom;
-
-    @Column(unique = true)
-    private String email;
-
-    @Column(unique = true)
-    private String username;
-
-    private String telephone;
-    private String motDePasse;
-    private Boolean statut;
-
-    public UUID getAdminId() {
-        return adminId;
+@Table(name = "admins")
+@PrimaryKeyJoinColumn(name = "user_id")
+public class Admin extends User {
+    
+    public Admin() {
+        this.setUserType(UserType.ADMIN);
     }
-
-    public void setAdminId(UUID adminId) {
-        this.adminId = adminId;
+    
+    // Admin-specific fields and methods can be added here
+    
+    @Override
+    public UUID getUserId() {
+        return super.getUserId();
     }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
+    
+    @Override
     public String getMotDePasse() {
-        return motDePasse;
+        return super.getMotDePasse();
     }
-
-    public void setMotDePasse(String motDePasse) {
-        this.motDePasse = motDePasse;
+    
+    @Override
+    public UserType getUserType() {
+        return UserType.ADMIN;
     }
-
-    public Boolean getStatut() {
-        return statut;
+    
+    @Override
+    public boolean isActive() {
+        return super.isActive();
     }
-
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
+    
+    @Override
+    public void setDerniereConnexion(java.time.LocalDateTime now) {
+        super.setDerniereConnexion(now);
     }
-
 }
