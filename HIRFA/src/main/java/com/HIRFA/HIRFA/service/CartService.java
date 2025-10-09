@@ -1,5 +1,6 @@
 package com.HIRFA.HIRFA.service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +35,8 @@ public class CartService {
                     Client client = new Client();
                     client.setClientId(clientId);
                     newPanier.setClient(client);
+                    newPanier.setDateCreation(LocalDateTime.now());  // Initialiser la date de création
+                    newPanier.setDateModification(LocalDateTime.now());
                     return panierRepository.save(newPanier);
                 });
 

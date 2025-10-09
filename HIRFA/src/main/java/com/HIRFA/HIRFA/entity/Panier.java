@@ -39,4 +39,13 @@ public class Panier {
                 .map(item -> item.getPrixUnitaire().multiply(BigDecimal.valueOf(item.getQuantite())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    @PrePersist
+    public void prePersist() {
+        if (this.dateCreation == null) {
+            this.dateCreation = LocalDateTime.now();  // Initialiser date_creation
+        }
+        if (this.dateModification == null) {
+            this.dateModification = LocalDateTime.now();  // Initialiser date_modification
+        }
+    }
 }

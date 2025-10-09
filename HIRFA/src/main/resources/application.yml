@@ -1,17 +1,21 @@
 server:
-  port: 8080
+  port: 8081  # Aligné avec application.properties
 
 spring:
   application:
     name: HIRFA
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  # Corrigé de MySQL8Dialect à PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate.format_sql: true
+
+  flyway:
+    enabled: false  # Désactivé Flyway pour éviter l'erreur PostgreSQL 17.6
+    ignore-migration-patterns: "*:missing,*:future"  # Corrigé la syntaxe (enlevé le : final)
 
   # Datasource IA (Postgres/Supabase)
   ai-datasource:
@@ -19,10 +23,12 @@ spring:
     username: postgres.stpbxylzfdtlqffkcpuo
     password: Hirfa2025@
     driver-class-name: org.postgresql.Driver
-    # Optionnel: pool Hikari
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
 
-# Scheduler on
-spring.task.scheduling.pool.size: 2
+  # Scheduler
+  task:
+    scheduling:
+      pool:
+        size: 2
