@@ -3,18 +3,12 @@ package com.HIRFA.HIRFA.controller;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import com.HIRFA.HIRFA.entity.Panier;
 import com.HIRFA.HIRFA.service.CartService;
-
+import com.HIRFA.HIRFA.service.AIEventService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class CartController {
 
     private final CartService cartService;
+    private AIEventService aiEventService;
 
     @PostMapping("/{clientId}/add")
     public ResponseEntity<Panier> addProduct(
@@ -57,4 +52,6 @@ public class CartController {
         cartService.clearCart(clientId);
         return ResponseEntity.noContent().build();
     }
+
+
 }

@@ -1,12 +1,11 @@
 package com.HIRFA.HIRFA.service;
 
+import java.util.Map;
 import java.util.UUID;
+
+import com.HIRFA.HIRFA.entity.*;
 import org.springframework.stereotype.Service;
 
-import com.HIRFA.HIRFA.entity.Client;
-import com.HIRFA.HIRFA.entity.Panier;
-import com.HIRFA.HIRFA.entity.PanierItem;
-import com.HIRFA.HIRFA.entity.Product;
 import com.HIRFA.HIRFA.repository.PanierRepository;
 import com.HIRFA.HIRFA.repository.ProductRepository;
 import com.HIRFA.HIRFA.repository.panier_itemRepository;
@@ -16,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CartService {
-
     private final PanierRepository panierRepository;
     private final panier_itemRepository panierItemRepository;
     private final ProductRepository productRepository;
+    private final AIEventService aiEventService;
 
     public Panier addProductToCart(UUID clientId, UUID productId, int qty) {
         Product product = productRepository.findById(productId)
@@ -52,6 +51,9 @@ public class CartService {
         panier.getItems().add(item);
 
         panierRepository.save(panier);
+        //partie_IA
+        aiEventService.logAddToCart(clientId.toString(), productId.toString(), qty, Map.of("source", "web"));
+        /// ///////
         return panier;
     }
 
@@ -67,6 +69,9 @@ public class CartService {
 
         item.setQuantite(qty);
         panierRepository.save(panier);
+        //partieAI
+        // Log de l'événement "add_to_cart" pour la mise à jour de quantité
+        aiEventService.logAddToCart(clientId.toString(), productId.toString(), qty, Map.of("source", "web"));
         return panier;
     }
 
