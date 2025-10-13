@@ -1,8 +1,7 @@
 package com.HIRFA.HIRFA.controller;
 
 import com.HIRFA.HIRFA.entity.*;
-import com.HIRFA.HIRFA.entity.User.UserType;
-import com.HIRFA.HIRFA.security.ClientDetailsService;
+
 import com.HIRFA.HIRFA.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,7 @@ public class AdminController {
     private UserService userService;
 
     @Autowired
-    private ClientDetailsService clientService;
+    private ClientService clientService;
 
     @Autowired
     private DesignerService designerService;
@@ -38,6 +37,9 @@ public class AdminController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private DesignService designService;
 
     // 🔹 Get all users with pagination and filtering
     @GetMapping("/users")
@@ -125,8 +127,8 @@ public class AdminController {
             stats.put("newUsersThisWeek", userService.countNewUsersThisWeek());
 
             // Verification stats
-            stats.put("verifiedCooperatives", cooperativeService.countByStatutVerification(true));
-            stats.put("pendingCooperatives", cooperativeService.countByStatutVerification(false));
+            stats.put("verifiedCooperatives", cooperativeService.countByStatutVerification("VERIFIED"));
+            stats.put("pendingCooperatives", cooperativeService.countByStatutVerification("PENDING"));
 
             return ResponseEntity.ok(stats);
         } catch (Exception e) {
@@ -251,7 +253,7 @@ public class AdminController {
 
     // 🔹 Approve reported product
     @PutMapping("/products/{productId}/approve")
-    public ResponseEntity<?> approveProduct(@PathVariable Long productId) {
+    public ResponseEntity<?> approveProduct(@PathVariable UUID productId) {
         try {
             Product product = productService.approveProduct(productId);
             if (product != null) {
@@ -269,7 +271,7 @@ public class AdminController {
 
     // 🔹 Reject reported product
     @PutMapping("/products/{productId}/reject")
-    public ResponseEntity<?> rejectProduct(@PathVariable Long productId) {
+    public ResponseEntity<?> rejectProduct(@PathVariable UUID productId) {
         try {
             Product product = productService.rejectProduct(productId);
             if (product != null) {
@@ -281,6 +283,64 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(createErrorResponse("Failed to reject product: " + e.getMessage(), "REJECT_PRODUCT_FAILED"));
+        }
+    }
+
+    // 🔹 Get reported designs
+    @GetMapping("/designs/reported")
+    public ResponseEntity<?> getReportedDesigns(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reportedAt"));
+            Page<Design> designsPage = designService.getReportedDesigns(pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("designs", designsPage.getContent());
+            response.put("currentPage", designsPage.getNumber());
+            response.put("totalItems", designsPage.getTotalElements());
+            response.put("totalPages", designsPage.getTotalPages());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(createErrorResponse("Failed to fetch reported designs: " + e.getMessage(),
+                            "FETCH_REPORTED_DESIGNS_FAILED"));
+        }
+    }
+
+    // 🔹 Approve reported design
+    @PutMapping("/designs/{designId}/approve")
+    public ResponseEntity<?> approveDesign(@PathVariable UUID designId) {
+        try {
+            Design design = designService.approveDesign(designId);
+            if (design != null) {
+                return ResponseEntity.ok(createSuccessResponse("Design approved successfully"));
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(createErrorResponse("Design not found", "DESIGN_NOT_FOUND"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(createErrorResponse("Failed to approve design: " + e.getMessage(),
+                            "APPROVE_DESIGN_FAILED"));
+        }
+    }
+
+    // 🔹 Reject reported design
+    @PutMapping("/designs/{designId}/reject")
+    public ResponseEntity<?> rejectDesign(@PathVariable UUID designId) {
+        try {
+            Design design = designService.rejectDesign(designId);
+            if (design != null) {
+                return ResponseEntity.ok(createSuccessResponse("Design rejected successfully"));
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(createErrorResponse("Design not found", "DESIGN_NOT_FOUND"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(createErrorResponse("Failed to reject design: " + e.getMessage(), "REJECT_DESIGN_FAILED"));
         }
     }
 

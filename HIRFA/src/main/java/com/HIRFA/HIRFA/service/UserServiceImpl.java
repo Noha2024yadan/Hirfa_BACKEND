@@ -3,7 +3,7 @@ package com.HIRFA.HIRFA.service;
 import com.HIRFA.HIRFA.dto.*;
 import com.HIRFA.HIRFA.dto.UserActivityDto;
 import com.HIRFA.HIRFA.entity.*;
-import com.HIRFA.HIRFA.entity.User.UserType;
+import com.HIRFA.HIRFA.entity.UserType;
 import com.HIRFA.HIRFA.exception.ResourceNotFoundException;
 import com.HIRFA.HIRFA.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;

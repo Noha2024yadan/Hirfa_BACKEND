@@ -3,7 +3,6 @@ package com.HIRFA.HIRFA.security;
 import com.HIRFA.HIRFA.entity.Client;
 import com.HIRFA.HIRFA.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +28,4 @@ public class ClientDetailsService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public Object findAllClients(Pageable pageable) {
-        throw new UnsupportedOperationException("Unimplemented method 'findAllClients'");
-    }
 }

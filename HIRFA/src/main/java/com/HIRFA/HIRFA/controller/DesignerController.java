@@ -3,7 +3,7 @@ package com.HIRFA.HIRFA.controller;
 import com.HIRFA.HIRFA.dto.*;
 import com.HIRFA.HIRFA.entity.Designer;
 import com.HIRFA.HIRFA.entity.RefreshToken;
-import com.HIRFA.HIRFA.entity.User.UserType;
+import com.HIRFA.HIRFA.entity.UserType;
 import com.HIRFA.HIRFA.repository.DesignerRepository;
 import com.HIRFA.HIRFA.exception.EmailAlreadyExistsException;
 import com.HIRFA.HIRFA.exception.UsernameAlreadyExistsException;
@@ -179,7 +179,7 @@ public class DesignerController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody PasswordResetRequestDto request) {
         try {
-            passwordResetService.initiatePasswordReset(request.getEmail());
+            passwordResetService.createPasswordResetTokenAndSendEmail(request.getEmail());
             return ResponseEntity.ok(createSuccessResponse("Email de réinitialisation envoyé"));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -195,8 +195,14 @@ public class DesignerController {
                 return ResponseEntity.badRequest()
                         .body(createErrorResponse("Les mots de passe ne correspondent pas", "PASSWORDS_DO_NOT_MATCH"));
             }
-            passwordResetService.resetPassword(request.getToken(), request.getNewPassword());
-            return ResponseEntity.ok(createSuccessResponse("Mot de passe réinitialisé avec succès"));
+            boolean success = passwordResetService.resetPasswordByRole(request.getToken(), request.getNewPassword(),
+                    UserType.DESIGNER);
+            if (success) {
+                return ResponseEntity.ok(createSuccessResponse("Mot de passe réinitialisé avec succès"));
+            } else {
+                return ResponseEntity.badRequest()
+                        .body(createErrorResponse("Token invalide ou expiré", "PASSWORD_RESET_FAILED"));
+            }
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(createErrorResponse(e.getMessage(), "PASSWORD_RESET_FAILED"));
@@ -210,7 +216,19 @@ public class DesignerController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUsername = authentication.getName();
 
-            Designer updatedDesigner = designerService.updateDesignerProfile(currentUsername, updateDto);
+            Designer designer = designerService.findByUsername(currentUsername)
+                    .orElseThrow(() -> new RuntimeException("Designer not found"));
+
+            DesignerDTO dto = new DesignerDTO();
+            dto.setNom(updateDto.getNom());
+            dto.setPrenom(updateDto.getPrenom());
+            dto.setEmail(updateDto.getEmail());
+            dto.setTelephone(updateDto.getTelephone());
+            dto.setPortfolio(updateDto.getPortfolio());
+            dto.setSpecialites(updateDto.getSpecialites());
+            dto.setTarifs(updateDto.getTarifs());
+
+            Designer updatedDesigner = designerService.updateDesignerProfile(designer.getUserId(), dto);
             return ResponseEntity.ok(updatedDesigner);
 
         } catch (Exception e) {

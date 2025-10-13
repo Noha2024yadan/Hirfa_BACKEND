@@ -2,13 +2,15 @@ package com.HIRFA.HIRFA.dto;
 
 import com.HIRFA.HIRFA.entity.Product;
 import com.HIRFA.HIRFA.entity.User;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ProductResponseDto {
-    private Long id;
+    private UUID id;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private String category;
     private String imageUrl;
     private Boolean isAvailable;
@@ -27,28 +29,28 @@ public class ProductResponseDto {
     }
 
     public ProductResponseDto(Product product) {
-        this.id = product.getId();
+        this.id = product.getProductId();
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
         this.category = product.getCategory();
-        this.imageUrl = product.getImageUrl();
-        this.isAvailable = product.getIsAvailable();
+        this.imageUrl = product.getImages().isEmpty() ? null : product.getImages().get(0).getUrl();
+        this.isAvailable = product.isAvailable();
         this.stockQuantity = product.getStockQuantity();
         this.createdAt = product.getCreatedAt();
         this.updatedAt = product.getUpdatedAt();
-        this.isReported = product.getIsReported();
+        this.isReported = product.isReported();
         this.reportedReason = product.getReportedReason();
         this.reportedBy = product.getReportedBy();
         this.reportedAt = product.getReportedAt();
     }
 
     // Getters and Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -68,11 +70,11 @@ public class ProductResponseDto {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -1,25 +1,21 @@
 package com.HIRFA.HIRFA.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
-public class UpdateUserDto {
-    @NotBlank()
+public class DesignerDTO {
     private String nom;
-
-    @NotBlank()
     private String prenom;
-    @Email()
+    @Email
     private String email;
-    @NotBlank()
     private String username;
-    @NotBlank()
     private String telephone;
-    @Size(min = 6)
     private String motDePasse;
-
-    private Boolean statut;
+    private String portfolio;
+    private String specialites;
+    private BigDecimal tarifs;
+    private Boolean confirmed;
 
     public String getNom() {
         return nom;
@@ -69,12 +65,35 @@ public class UpdateUserDto {
         this.motDePasse = motDePasse;
     }
 
-    public Boolean getStatut() {
-        return statut;
+    public String getPortfolio() {
+        return portfolio;
     }
 
-    public void setStatut(Boolean statut) {
-        this.statut = statut;
+    public void setPortfolio(String portfolio) {
+        this.portfolio = portfolio;
     }
 
+    public String getSpecialites() {
+        return specialites;
+    }
+
+    public void setSpecialites(String specialites) {
+        this.specialites = specialites;
+    }
+
+    public BigDecimal getTarifs() {
+        return tarifs;
+    }
+
+    public void setTarifs(BigDecimal tarifs) {
+        this.tarifs = tarifs;
+    }
+
+    public Boolean getLConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 }

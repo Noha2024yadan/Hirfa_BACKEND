@@ -2,10 +2,16 @@ package com.HIRFA.HIRFA.entity;
 
 import jakarta.persistence.*;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "cooperatives")
 @PrimaryKeyJoinColumn(name = "user_id")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Cooperative extends User {
+    private String brand;
     private String description;
     private String adresse;
     private String licence;
@@ -13,37 +19,5 @@ public class Cooperative extends User {
 
     public Cooperative() {
         this.setUserType(UserType.COOPERATIVE);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getAdresse() {
-        return adresse;
-    }
-
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
-    public String getLicence() {
-        return licence;
-    }
-
-    public void setLicence(String licence) {
-        this.licence = licence;
-    }
-
-    public String getStatutVerification() {
-        return statutVerification;
-    }
-
-    public void setStatutVerification(String statutVerification) {
-        this.statutVerification = statutVerification;
     }
 }

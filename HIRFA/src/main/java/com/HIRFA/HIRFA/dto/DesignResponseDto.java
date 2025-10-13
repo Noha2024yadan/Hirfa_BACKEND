@@ -4,9 +4,11 @@ import com.HIRFA.HIRFA.entity.Design;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.Data;
 
+@Data
 public class DesignResponseDto {
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
     private BigDecimal price;
@@ -23,7 +25,7 @@ public class DesignResponseDto {
     private String dimensions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+
     // Designer information
     private UUID designerId;
     private String designerName;
@@ -31,44 +33,38 @@ public class DesignResponseDto {
     private String designerPortfolio;
 
     // Constructors
-    public DesignResponseDto() {}
+    public DesignResponseDto() {
+    }
 
     public DesignResponseDto(Design design) {
-        this.id = design.getId();
-        this.title = design.getTitle();
+        this.id = design.getDesignId();
+        this.title = design.getTitle() != null ? design.getTitle() : design.getNomDesign();
         this.description = design.getDescription();
-        this.price = design.getPrice();
+        this.price = design.getPrix();
         this.category = design.getCategory();
         this.imageUrl = design.getImageUrl();
-        this.isAvailable = design.getIsAvailable();
-        this.isFeatured = design.getIsFeatured();
-        this.rating = design.getRating();
-        this.reviewCount = design.getReviewCount();
-        this.downloadCount = design.getDownloadCount();
-        this.tags = design.getTags();
-        this.fileFormat = design.getFileFormat();
-        this.fileSize = design.getFileSize();
-        this.dimensions = design.getDimensions();
-        this.createdAt = design.getCreatedAt();
-        this.updatedAt = design.getUpdatedAt();
-        
-        // Designer information
-        if (design.getDesigner() != null) {
-            this.designerId = design.getDesigner().getUserId();
-            this.designerName = design.getDesigner().getNom() + " " + design.getDesigner().getPrenom();
-            this.designerUsername = design.getDesigner().getUsername();
-            this.designerPortfolio = design.getDesigner().getPortfolio();
-        }
+        this.isAvailable = design.isAvailable();
+        this.createdAt = design.getDateCreation();
+        // Other fields not in Design entity, set to null or default
+        this.isFeatured = null;
+        this.rating = null;
+        this.reviewCount = null;
+        this.downloadCount = null;
+        this.tags = null;
+        this.fileFormat = null;
+        this.fileSize = null;
+        this.dimensions = null;
+        this.updatedAt = null;
+
+        // Designer information - assuming Design has a designer field, but it doesn't,
+        // so skip or add later
+        this.designerId = null;
+        this.designerName = null;
+        this.designerUsername = null;
+        this.designerPortfolio = null;
     }
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -198,6 +194,14 @@ public class DesignResponseDto {
         this.updatedAt = updatedAt;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public UUID getDesignerId() {
         return designerId;
     }
@@ -230,5 +234,3 @@ public class DesignResponseDto {
         this.designerPortfolio = designerPortfolio;
     }
 }
-
-

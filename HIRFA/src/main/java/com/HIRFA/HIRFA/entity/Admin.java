@@ -3,9 +3,14 @@ package com.HIRFA.HIRFA.entity;
 import jakarta.persistence.*;
 import java.util.UUID;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "admins")
 @PrimaryKeyJoinColumn(name = "user_id")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Admin extends User {
     
     public Admin() {

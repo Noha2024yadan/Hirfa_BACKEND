@@ -1,15 +1,31 @@
 package com.HIRFA.HIRFA.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "products")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    private UUID productId;
 
     @Column(nullable = false)
     private String name;
@@ -17,149 +33,42 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
+    private BigDecimal price;
+
     @Column(nullable = false)
-    private Double price;
+    private int stockQuantity;
 
     private String category;
 
-    private String imageUrl;
+    private BigDecimal poids;
 
-    @Column(nullable = false)
-    private Boolean isAvailable = true;
+    private String dimensions;
 
-    private Integer stockQuantity;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    // Reported fields
-    @Column(nullable = false)
-    private Boolean isReported = false;
+    private Boolean statut;
+
+    private int signalements;
+
+    private boolean isReported;
 
     private String reportedReason;
 
     @ManyToOne
-    @JoinColumn(name = "reported_by")
     private User reportedBy;
 
     private LocalDateTime reportedAt;
 
-    // Constructors
-    public Product() {
-    }
+    private boolean isAvailable;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "product")
+    @JsonIgnore
+    @Default
+    private List<PanierItem> items = new ArrayList<>();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Boolean getIsAvailable() {
-        return isAvailable;
-    }
-
-    public void setIsAvailable(Boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
-
-    public Integer getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(Integer stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Boolean getIsReported() {
-        return isReported;
-    }
-
-    public void setIsReported(Boolean isReported) {
-        this.isReported = isReported;
-    }
-
-    public String getReportedReason() {
-        return reportedReason;
-    }
-
-    public void setReportedReason(String reportedReason) {
-        this.reportedReason = reportedReason;
-    }
-
-    public User getReportedBy() {
-        return reportedBy;
-    }
-
-    public void setReportedBy(User reportedBy) {
-        this.reportedBy = reportedBy;
-    }
-
-    public LocalDateTime getReportedAt() {
-        return reportedAt;
-    }
-
-    public void setReportedAt(LocalDateTime reportedAt) {
-        this.reportedAt = reportedAt;
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Default
+    private List<Image> images = new ArrayList<>();
 }

@@ -128,7 +128,7 @@ public class ClientServiceImpl implements ClientService {
     public void toggleStatus(UUID id) {
         Client client = findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
-        client.setStatut(!client.getStatut());
+        client.setStatut(!client.isStatut());
         clientRepository.save(client);
     }
 }

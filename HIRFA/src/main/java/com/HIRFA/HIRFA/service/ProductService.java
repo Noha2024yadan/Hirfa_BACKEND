@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -24,7 +25,7 @@ public class ProductService {
     }
 
     // Get product by ID
-    public Optional<Product> getProductById(Long id) {
+    public Optional<Product> getProductById(UUID id) {
         return productRepository.findById(id);
     }
 
@@ -34,7 +35,7 @@ public class ProductService {
     }
 
     // Delete product
-    public void deleteProduct(Long id) {
+    public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
     }
 
@@ -49,11 +50,11 @@ public class ProductService {
     }
 
     // Report a product
-    public Product reportProduct(Long productId, String reason, User reportedBy) {
+    public Product reportProduct(UUID productId, String reason, User reportedBy) {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setIsReported(true);
+            product.setReported(true);
             product.setReportedReason(reason);
             product.setReportedBy(reportedBy);
             product.setReportedAt(LocalDateTime.now());
@@ -63,11 +64,11 @@ public class ProductService {
     }
 
     // Approve reported product (unreport)
-    public Product approveProduct(Long productId) {
+    public Product approveProduct(UUID productId) {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setIsReported(false);
+            product.setReported(false);
             product.setReportedReason(null);
             product.setReportedBy(null);
             product.setReportedAt(null);
@@ -77,12 +78,12 @@ public class ProductService {
     }
 
     // Reject reported product (disable)
-    public Product rejectProduct(Long productId) {
+    public Product rejectProduct(UUID productId) {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setIsAvailable(false);
-            product.setIsReported(false);
+            product.setAvailable(false);
+            product.setReported(false);
             product.setReportedReason(null);
             product.setReportedBy(null);
             product.setReportedAt(null);
