@@ -1,0 +1,9 @@
+{
+  "email": "test123456789@cooperative.com",
+  "brand": "Test Cooperative",
+  "telephone": "0123456789",
+  "motDePasse": "password123",
+  "description": "Une cooperative de test",
+  "adresse": "123 Rue Test",
+  "licence": "LIC123"
+}
