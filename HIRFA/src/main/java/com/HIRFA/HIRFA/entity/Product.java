@@ -63,6 +63,12 @@ public class Product {
 
     private boolean isAvailable;
 
+    // ===== RELATION AVEC COOPÉRATIVE =====
+    // Chaque produit appartient à une coopérative
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cooperative_id")
+    private Cooperative cooperative;
+
     @OneToMany(mappedBy = "product")
     @JsonIgnore
     @Default

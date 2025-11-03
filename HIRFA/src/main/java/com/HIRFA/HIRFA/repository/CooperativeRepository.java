@@ -25,4 +25,15 @@ public interface CooperativeRepository extends JpaRepository<Cooperative, UUID> 
     Page<Cooperative> findByStatutVerification(String statutVerification, Pageable pageable);
 
     long countByStatutVerification(String statutVerification);
+    
+    // ===== MÉTHODES AJOUTÉES POUR LA FONCTIONNALITÉ D'INFORMATIONS CÔTÉ DESIGNER =====
+    
+    // Trouver toutes les coopératives actives
+    List<Cooperative> findByEnabled(boolean enabled);
+    
+    // Rechercher par marque (ignorer la casse) et actives seulement
+    List<Cooperative> findByBrandContainingIgnoreCaseAndEnabled(String brand, boolean enabled);
+    
+    // Rechercher par adresse (ville/région) et actives seulement
+    List<Cooperative> findByAdresseContainingIgnoreCaseAndEnabled(String adresse, boolean enabled);
 }

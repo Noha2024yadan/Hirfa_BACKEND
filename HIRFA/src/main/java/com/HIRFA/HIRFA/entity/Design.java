@@ -42,4 +42,10 @@ public class Design {
     @ManyToOne
     private User reportedBy;
     private LocalDateTime reportedAt;
+
+    // ===== RELATION AVEC DESIGNER =====
+    // Chaque design appartient à un designer
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "designer_id")
+    private Designer designer;
 }
