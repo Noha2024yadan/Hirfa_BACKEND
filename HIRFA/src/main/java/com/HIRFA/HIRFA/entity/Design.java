@@ -39,8 +39,6 @@ public class Design {
     private boolean isAvailable;
     private boolean isReported;
     private String reportedReason;
-    @ManyToOne
-    private User reportedBy;
     private LocalDateTime reportedAt;
 
     // ===== RELATION AVEC DESIGNER =====

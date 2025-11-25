@@ -35,4 +35,5 @@ public class ProductResponse {
     private int signalements;
     private List<String> imageUrls; // URLs des images
     private String cooperativeName; // Nom de la coopérative
+    private String brand;
 }

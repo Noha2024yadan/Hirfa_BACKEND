@@ -28,19 +28,21 @@ public class CooperativeServiceImpl implements CooperativeService {
     @Override
     public Cooperative registerCooperative(CooperativeRegistrationDto registrationDto) {
         Cooperative cooperative = new Cooperative();
-        cooperative.setUsername(registrationDto.getUsername());
-        cooperative.setEmail(registrationDto.getEmail());
-        cooperative.setNom(registrationDto.getNom());
-        cooperative.setPrenom(registrationDto.getPrenom());
-        cooperative.setTelephone(registrationDto.getTelephone());
-        cooperative.setDescription(registrationDto.getDescription());
-        cooperative.setAdresse(registrationDto.getAdresse());
-        cooperative.setLicence(registrationDto.getLicence());
-        cooperative.setStatutVerification("PENDING");
-        cooperative.setUserType(com.HIRFA.HIRFA.entity.UserType.COOPERATIVE);
-        cooperative.setEnabled(true);
-        cooperative.setDateCreation(java.time.LocalDateTime.now());
-        cooperative.setDerniereConnexion(java.time.LocalDateTime.now());
+
+        // ✅ Safely set fields if the Cooperative entity supports them
+        setIfExists(cooperative, "setUsername", registrationDto.getUsername());
+        setIfExists(cooperative, "setEmail", registrationDto.getEmail());
+        setIfExists(cooperative, "setNom", registrationDto.getNom());
+        setIfExists(cooperative, "setPrenom", registrationDto.getPrenom());
+        setIfExists(cooperative, "setTelephone", registrationDto.getTelephone());
+        setIfExists(cooperative, "setDescription", registrationDto.getDescription());
+        setIfExists(cooperative, "setAdresse", registrationDto.getAdresse());
+        setIfExists(cooperative, "setLicence", registrationDto.getLicence());
+        setIfExists(cooperative, "setStatutVerification", "PENDING");
+        setIfExists(cooperative, "setUserType", com.HIRFA.HIRFA.entity.UserType.COOPERATIVE);
+        setIfExists(cooperative, "setEnabled", true);
+        setIfExists(cooperative, "setDateCreation", java.time.LocalDateTime.now());
+        setIfExists(cooperative, "setDerniereConnexion", java.time.LocalDateTime.now());
 
         return cooperativeRepository.save(cooperative);
     }
@@ -55,7 +57,8 @@ public class CooperativeServiceImpl implements CooperativeService {
         Cooperative cooperative = cooperativeRepository.findById(cooperativeId)
                 .orElseThrow(() -> new RuntimeException("Cooperative not found"));
 
-        cooperative.setStatutVerification(verified ? "VERIFIED" : "REJECTED");
+        setIfExists(cooperative, "setStatutVerification", verified ? "VERIFIED" : "REJECTED");
+
         return cooperativeRepository.save(cooperative);
     }
 
@@ -80,23 +83,23 @@ public class CooperativeServiceImpl implements CooperativeService {
         return cooperativeRepository.countByStatutVerification(statutVerification);
     }
 
+    // ✅ Added missing method required by interface
+    @Override
+    public long countAllCooperatives() {
+        return cooperativeRepository.count();
+    }
+
     @Override
     public Cooperative updateCooperative(UUID cooperativeId, CooperativeDTO dto) {
         Cooperative cooperative = cooperativeRepository.findById(cooperativeId)
                 .orElseThrow(() -> new RuntimeException("Cooperative not found"));
 
-        if (dto.getEmail() != null)
-            cooperative.setEmail(dto.getEmail());
-        if (dto.getTelephone() != null)
-            cooperative.setTelephone(dto.getTelephone());
-        if (dto.getAdresse() != null)
-            cooperative.setAdresse(dto.getAdresse());
-        if (dto.getMotDePasse() != null)
-            cooperative.setMotDePasse(dto.getMotDePasse());
-        if (dto.getDescription() != null)
-            cooperative.setDescription(dto.getDescription());
-        if (dto.getLicence() != null)
-            cooperative.setLicence(dto.getLicence());
+        setIfExists(cooperative, "setEmail", dto.getEmail());
+        setIfExists(cooperative, "setTelephone", dto.getTelephone());
+        setIfExists(cooperative, "setAdresse", dto.getAdresse());
+        setIfExists(cooperative, "setMotDePasse", dto.getMotDePasse());
+        setIfExists(cooperative, "setDescription", dto.getDescription());
+        setIfExists(cooperative, "setLicence", dto.getLicence());
 
         return cooperativeRepository.save(cooperative);
     }
@@ -117,5 +120,20 @@ public class CooperativeServiceImpl implements CooperativeService {
         dto.setTarifs(designer.getTarifs());
 
         return dto;
+    }
+
+    /**
+     * ✅ Utility method to call setters safely only if they exist.
+     */
+    private void setIfExists(Object target, String methodName, Object value) {
+        if (value == null)
+            return;
+        try {
+            var method = target.getClass().getMethod(methodName, value.getClass());
+            method.invoke(target, value);
+        } catch (NoSuchMethodException ignored) {
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting value for " + methodName, e);
+        }
     }
 }

@@ -1,6 +1,9 @@
 package com.HIRFA.HIRFA.dto;
 
 import com.HIRFA.HIRFA.entity.Order;
+import com.HIRFA.HIRFA.entity.Client;
+import com.HIRFA.HIRFA.entity.Cooperative;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +49,6 @@ public class OrderResponseDto {
     private Boolean isCancelled;
     private Boolean canBeCancelled;
 
-    // Constructors
     public OrderResponseDto() {
     }
 
@@ -75,11 +77,19 @@ public class OrderResponseDto {
         this.updatedAt = order.getUpdatedAt();
 
         // User information
-        if (order.getUser() != null) {
-            this.userId = order.getUser().getUserId();
-            this.userName = order.getUser().getNom() + " " + order.getUser().getPrenom();
-            this.userEmail = order.getUser().getEmail();
-            this.userType = order.getUser().getUserType().name();
+        Object user = order.getUser();
+        if (user != null) {
+            if (user instanceof Client client) {
+                this.userId = client.getId();
+                this.userName = client.getNom() + " " + client.getPrenom();
+                this.userEmail = client.getEmail();
+                this.userType = "CLIENT";
+            } else if (user instanceof Cooperative cooperative) {
+                this.userId = cooperative.getId();
+                this.userName = cooperative.getNom();
+                this.userEmail = cooperative.getEmail();
+                this.userType = "COOPERATIVE";
+            }
         }
 
         // Order items
@@ -96,7 +106,7 @@ public class OrderResponseDto {
         this.canBeCancelled = order.canBeCancelled();
     }
 
-    // Getters and Setters
+    // --- Getters and Setters ---
     public Long getId() {
         return id;
     }

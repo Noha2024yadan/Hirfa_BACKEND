@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.dto;
 
 import com.HIRFA.HIRFA.entity.Product;
-import com.HIRFA.HIRFA.entity.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,7 +20,6 @@ public class ProductResponseDto {
     // Reported fields
     private Boolean isReported;
     private String reportedReason;
-    private User reportedBy;
     private LocalDateTime reportedAt;
 
     // Constructors
@@ -41,7 +39,6 @@ public class ProductResponseDto {
         this.updatedAt = product.getUpdatedAt();
         this.isReported = product.isReported();
         this.reportedReason = product.getReportedReason();
-        this.reportedBy = product.getReportedBy();
         this.reportedAt = product.getReportedAt();
     }
 
@@ -140,14 +137,6 @@ public class ProductResponseDto {
 
     public void setReportedReason(String reportedReason) {
         this.reportedReason = reportedReason;
-    }
-
-    public User getReportedBy() {
-        return reportedBy;
-    }
-
-    public void setReportedBy(User reportedBy) {
-        this.reportedBy = reportedBy;
     }
 
     public LocalDateTime getReportedAt() {

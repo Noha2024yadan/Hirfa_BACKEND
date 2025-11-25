@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.service;
 
 import com.HIRFA.HIRFA.dto.*;
-import com.HIRFA.HIRFA.entity.User;
 import com.HIRFA.HIRFA.entity.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,17 +9,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
-    User registerUser(BaseUserRegistrationDto registrationDto);
+
+    Object registerUser(BaseUserRegistrationDto registrationDto);
 
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
 
-    Optional<User> findUserById(UUID userId);
+    Optional<Object> findUserById(UUID userId);
 
-    Page<User> findAllUsers(UserType userType, Boolean enabled, String search, Pageable pageable);
+    Page<Object> findAllUsers(UserType userType, Boolean enabled, String search, Pageable pageable);
 
-    User updateUserStatus(UUID userId, boolean enabled);
+    Object updateUserStatus(UUID userId, boolean enabled);
 
     void deleteUser(UUID userId);
 
@@ -32,13 +32,15 @@ public interface UserService {
 
     long countNewUsersThisWeek();
 
-    Page<User> searchUsers(String query, Pageable pageable);
+    Page<Object> searchUsers(String query, Pageable pageable);
 
     /**
-     * Retrieves a page of recent user activities
-     * 
+     * Retrieves a page of recent user activities.
+     *
      * @param pageable pagination information
      * @return page of user activities
      */
     Page<UserActivityDto> getRecentActivities(Pageable pageable);
+
+    Object registerUser(Object registrationDto);
 }

@@ -4,7 +4,9 @@ import com.HIRFA.HIRFA.entity.Cooperative;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,15 +27,25 @@ public interface CooperativeRepository extends JpaRepository<Cooperative, UUID> 
     Page<Cooperative> findByStatutVerification(String statutVerification, Pageable pageable);
 
     long countByStatutVerification(String statutVerification);
-    
-    // ===== MÉTHODES AJOUTÉES POUR LA FONCTIONNALITÉ D'INFORMATIONS CÔTÉ DESIGNER =====
-    
+
+    // ===== MÉTHODES AJOUTÉES POUR LA FONCTIONNALITÉ D'INFORMATIONS CÔTÉ DESIGNER
+    // =====
+
     // Trouver toutes les coopératives actives
     List<Cooperative> findByEnabled(boolean enabled);
-    
+
     // Rechercher par marque (ignorer la casse) et actives seulement
     List<Cooperative> findByBrandContainingIgnoreCaseAndEnabled(String brand, boolean enabled);
-    
+
     // Rechercher par adresse (ville/région) et actives seulement
     List<Cooperative> findByAdresseContainingIgnoreCaseAndEnabled(String adresse, boolean enabled);
+
+    long countByDerniereConnexionAfter(LocalDateTime date);
+
+    long countByDateCreationAfter(LocalDateTime date);
+
+    @Query("SELECT c FROM Cooperative c WHERE c.username LIKE %:query% OR c.email LIKE %:query%")
+    List<Cooperative> searchByUsernameOrEmail(String query);
+
+    boolean existsByUsername(String username);
 }

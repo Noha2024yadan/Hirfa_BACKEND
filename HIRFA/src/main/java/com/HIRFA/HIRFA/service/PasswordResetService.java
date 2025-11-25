@@ -52,7 +52,7 @@ public class PasswordResetService {
         UserType type = null;
 
         if (clientRepo.findByEmail(email).isPresent()) {
-            userId = clientRepo.findByEmail(email).get().getUserId();
+            userId = clientRepo.findByEmail(email).get().getId();
             type = UserType.CLIENT;
         } else if (designerRepo.findByEmail(email).isPresent()) {
             userId = designerRepo.findByEmail(email).get().getUserId();

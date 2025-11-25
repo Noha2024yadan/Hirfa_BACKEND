@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.service;
 
 import com.HIRFA.HIRFA.entity.Design;
-import com.HIRFA.HIRFA.entity.User;
 import com.HIRFA.HIRFA.repository.DesignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,14 +48,14 @@ public class DesignService {
         return designRepository.findByIsReportedTrue(pageable);
     }
 
-    // Report a design
-    public Design reportDesign(UUID designId, String reason, User reportedBy) {
+    // Report a design (without User entity)
+    public Design reportDesign(UUID designId, String reason, String reporterInfo) {
         Optional<Design> designOpt = designRepository.findById(designId);
         if (designOpt.isPresent()) {
             Design design = designOpt.get();
             design.setReported(true);
             design.setReportedReason(reason);
-            design.setReportedBy(reportedBy);
+            design.setReportedBy(reporterInfo); // store reporter name/email instead
             design.setReportedAt(LocalDateTime.now());
             return designRepository.save(design);
         }
@@ -65,30 +64,28 @@ public class DesignService {
 
     // Approve reported design (unreport)
     public Design approveDesign(UUID designId) {
-        Optional<Design> designOpt = designRepository.findById(designId);
-        if (designOpt.isPresent()) {
-            Design design = designOpt.get();
+        return designRepository.findById(designId).map(design -> {
             design.setReported(false);
             design.setReportedReason(null);
             design.setReportedBy(null);
             design.setReportedAt(null);
             return designRepository.save(design);
-        }
-        return null;
+        }).orElse(null);
     }
 
     // Reject reported design (disable)
     public Design rejectDesign(UUID designId) {
-        Optional<Design> designOpt = designRepository.findById(designId);
-        if (designOpt.isPresent()) {
-            Design design = designOpt.get();
+        return designRepository.findById(designId).map(design -> {
             design.setAvailable(false);
             design.setReported(false);
             design.setReportedReason(null);
             design.setReportedBy(null);
             design.setReportedAt(null);
             return designRepository.save(design);
-        }
-        return null;
+        }).orElse(null);
+    }
+
+    public long countAllDesigns() {
+        return designRepository.count();
     }
 }

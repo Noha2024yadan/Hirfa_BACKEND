@@ -34,18 +34,18 @@ public class ClientRequestResponseDto {
     private LocalDateTime updatedAt;
     private LocalDateTime respondedAt;
     private LocalDateTime completedAt;
-    
+
     // Client information
     private UUID clientId;
     private String clientName;
     private String clientEmail;
     private String clientPhone;
-    
+
     // Cooperative information
     private UUID cooperativeId;
     private String cooperativeName;
     private String cooperativeEmail;
-    
+
     // Request status flags
     private Boolean isCompleted;
     private Boolean isCancelled;
@@ -55,7 +55,8 @@ public class ClientRequestResponseDto {
     private Boolean needsAttention;
 
     // Constructors
-    public ClientRequestResponseDto() {}
+    public ClientRequestResponseDto() {
+    }
 
     public ClientRequestResponseDto(ClientRequest clientRequest) {
         this.id = clientRequest.getId();
@@ -86,22 +87,23 @@ public class ClientRequestResponseDto {
         this.updatedAt = clientRequest.getUpdatedAt();
         this.respondedAt = clientRequest.getRespondedAt();
         this.completedAt = clientRequest.getCompletedAt();
-        
+
         // Client information
         if (clientRequest.getClient() != null) {
-            this.clientId = clientRequest.getClient().getUserId();
+            this.clientId = clientRequest.getClient().getId();
             this.clientName = clientRequest.getClient().getNom() + " " + clientRequest.getClient().getPrenom();
             this.clientEmail = clientRequest.getClient().getEmail();
             this.clientPhone = clientRequest.getClient().getTelephone();
         }
-        
+
         // Cooperative information
         if (clientRequest.getCooperative() != null) {
             this.cooperativeId = clientRequest.getCooperative().getUserId();
-            this.cooperativeName = clientRequest.getCooperative().getNom() + " " + clientRequest.getCooperative().getPrenom();
+            this.cooperativeName = clientRequest.getCooperative().getNom() + " "
+                    + clientRequest.getCooperative().getPrenom();
             this.cooperativeEmail = clientRequest.getCooperative().getEmail();
         }
-        
+
         // Request status flags
         this.isCompleted = clientRequest.isCompleted();
         this.isCancelled = clientRequest.isCancelled();
@@ -440,7 +442,3 @@ public class ClientRequestResponseDto {
         this.needsAttention = needsAttention;
     }
 }
-
-
-
-

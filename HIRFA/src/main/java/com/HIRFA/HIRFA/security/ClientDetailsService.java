@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.ArrayList;
 
@@ -20,12 +21,12 @@ public class ClientDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         Client client = clientRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "User not found with username or email: " + usernameOrEmail));
+                        "Client not found with username or email: " + usernameOrEmail));
 
-        return new org.springframework.security.core.userdetails.User(
-                client.getUsername(),
+        // Use email and password fields (adjust if your names differ)
+        return new User(
+                client.getEmail(),
                 client.getMotDePasse(),
                 new ArrayList<>());
     }
-
 }

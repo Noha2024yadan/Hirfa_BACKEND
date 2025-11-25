@@ -29,7 +29,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .claim("userType", userPrincipal.getUser().getUserType().name())
+                .claim("userType", userPrincipal.getUserType()) // ✅ fixed line
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS512)

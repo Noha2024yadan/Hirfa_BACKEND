@@ -4,7 +4,10 @@ import com.HIRFA.HIRFA.entity.Designer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +23,11 @@ public interface DesignerRepository extends JpaRepository<Designer, UUID> {
     Optional<Designer> findByUsernameOrEmail(String username, String email);
 
     Page<Designer> findBySpecialitesContaining(String specialite, Pageable pageable);
+
+    long countByDerniereConnexionAfter(LocalDateTime date);
+
+    long countByDateCreationAfter(LocalDateTime date);
+
+    @Query("SELECT d FROM Designer d WHERE d.username LIKE %:query% OR d.email LIKE %:query%")
+    List<Designer> searchByUsernameOrEmail(String query);
 }

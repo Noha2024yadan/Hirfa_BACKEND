@@ -1,46 +1,52 @@
 package com.HIRFA.HIRFA.entity;
 
 import jakarta.persistence.*;
-import java.util.UUID;
-
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "admins")
-@PrimaryKeyJoinColumn(name = "user_id")
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class Admin extends User {
-    
+public class Admin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID adminId;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String motDePasse;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType userType = UserType.ADMIN;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @Column(name = "derniere_connexion")
+    private LocalDateTime derniereConnexion;
+
     public Admin() {
-        this.setUserType(UserType.ADMIN);
+        this.userType = UserType.ADMIN;
+        this.active = true;
     }
-    
-    // Admin-specific fields and methods can be added here
-    
-    @Override
-    public UUID getUserId() {
-        return super.getUserId();
+
+    public void setDerniereConnexion(LocalDateTime derniereConnexion) {
+        this.derniereConnexion = derniereConnexion;
     }
-    
+
     @Override
-    public String getMotDePasse() {
-        return super.getMotDePasse();
-    }
-    
-    @Override
-    public UserType getUserType() {
-        return UserType.ADMIN;
-    }
-    
-    @Override
-    public boolean isActive() {
-        return super.isActive();
-    }
-    
-    @Override
-    public void setDerniereConnexion(java.time.LocalDateTime now) {
-        super.setDerniereConnexion(now);
+    public String toString() {
+        return "Admin{" +
+                "adminId=" + adminId +
+                ", email='" + email + '\'' +
+                ", active=" + active +
+                ", derniereConnexion=" + derniereConnexion +
+                '}';
     }
 }

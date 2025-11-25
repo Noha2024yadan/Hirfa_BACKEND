@@ -102,4 +102,9 @@ public class DesignerService {
 
         return designerRepository.save(existingDesigner);
     }
+
+    public long countAllDesigners() {
+        return designerRepository.count();
+    }
+
 }

@@ -4,7 +4,10 @@ import com.HIRFA.HIRFA.entity.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,4 +27,11 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     Optional<Client> findByUsername(String username);
 
     Page<Client> searchClients(String search, Pageable pageable);
+
+    long countByDerniereConnexionAfter(LocalDateTime date);
+
+    long countByDateCreationAfter(LocalDateTime date);
+
+    @Query("SELECT c FROM Client c WHERE c.username LIKE %:query% OR c.email LIKE %:query%")
+    List<Client> searchByUsernameOrEmail(String query);
 }

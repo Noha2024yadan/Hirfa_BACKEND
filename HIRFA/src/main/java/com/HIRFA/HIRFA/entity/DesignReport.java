@@ -30,10 +30,12 @@ public class DesignReport {
     @JoinColumn(name = "design_id", nullable = false)
     private Design design;
 
-    // L'utilisateur qui a signalé le design
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reporter_id", nullable = false)
-    private User reporter;
+    // Informations sur l'utilisateur qui a signalé le design
+    @Column(name = "reporter_id", nullable = false)
+    private UUID reporterId;
+
+    @Column(name = "reporter_username")
+    private String reporterUsername;
 
     // Raison du signalement
     @Column(nullable = false)

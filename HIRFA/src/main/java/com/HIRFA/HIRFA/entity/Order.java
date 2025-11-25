@@ -24,7 +24,7 @@ public class Order {
     private OrderStatus status;
 
     @NotNull(message = "Total amount is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Total amount must be greater than 0")
+    @DecimalMin(value = "0.0", inclusive = false)
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
@@ -77,25 +77,24 @@ public class Order {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Foreign key to User (Client, Cooperative, or Designer)
+    // ----- New: Replace User with Client and Cooperative -----
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    // One-to-many relationship with OrderItem
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cooperative_id")
+    private Cooperative cooperative;
+
+    // Order items
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    // Order Status Enum
+    // ----- Enums -----
     public enum OrderStatus {
-        PENDING("Pending"),
-        CONFIRMED("Confirmed"),
-        PROCESSING("Processing"),
-        SHIPPED("Shipped"),
-        DELIVERED("Delivered"),
-        CANCELLED("Cancelled"),
-        REFUNDED("Refunded"),
-        RETURNED("Returned");
+        PENDING("Pending"), CONFIRMED("Confirmed"), PROCESSING("Processing"),
+        SHIPPED("Shipped"), DELIVERED("Delivered"), CANCELLED("Cancelled"),
+        REFUNDED("Refunded"), RETURNED("Returned");
 
         private final String displayName;
 
@@ -108,13 +107,9 @@ public class Order {
         }
     }
 
-    // Payment Status Enum
     public enum PaymentStatus {
-        PENDING("Pending"),
-        PAID("Paid"),
-        FAILED("Failed"),
-        REFUNDED("Refunded"),
-        PARTIALLY_REFUNDED("Partially Refunded");
+        PENDING("Pending"), PAID("Paid"), FAILED("Failed"),
+        REFUNDED("Refunded"), PARTIALLY_REFUNDED("Partially Refunded");
 
         private final String displayName;
 
@@ -127,25 +122,23 @@ public class Order {
         }
     }
 
-    // Constructors
+    // ----- Constructors -----
     public Order() {
     }
 
-    public Order(String orderNumber, OrderStatus status, BigDecimal totalAmount, User user) {
+    public Order(String orderNumber, OrderStatus status, BigDecimal totalAmount) {
         this.orderNumber = orderNumber;
         this.status = status;
         this.totalAmount = totalAmount;
-        this.user = user;
     }
 
-    // JPA Lifecycle callbacks
+    // ----- JPA Lifecycle -----
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (orderNumber == null) {
+        if (orderNumber == null)
             orderNumber = generateOrderNumber();
-        }
     }
 
     @PreUpdate
@@ -153,12 +146,45 @@ public class Order {
         updatedAt = LocalDateTime.now();
     }
 
-    // Helper method to generate order number
     private String generateOrderNumber() {
         return "ORD-" + System.currentTimeMillis() + "-" + (int) (Math.random() * 1000);
     }
 
-    // Getters and Setters
+    // ----- Replace getUser() -----
+    @Transient
+    public Object getUser() {
+        if (client != null)
+            return client;
+        if (cooperative != null)
+            return cooperative;
+        return null;
+    }
+
+    // ----- Helper Methods -----
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void removeOrderItem(OrderItem orderItem) {
+        orderItems.remove(orderItem);
+        orderItem.setOrder(null);
+    }
+
+    public boolean isCompleted() {
+        return status == OrderStatus.DELIVERED;
+    }
+
+    public boolean isCancelled() {
+        return status == OrderStatus.CANCELLED || status == OrderStatus.REFUNDED || status == OrderStatus.RETURNED;
+    }
+
+    public boolean canBeCancelled() {
+        return status == OrderStatus.PENDING || status == OrderStatus.CONFIRMED;
+    }
+
+    // ----- Getters and Setters -----
+    // (include all fields including client and cooperative)
     public Long getId() {
         return id;
     }
@@ -319,12 +345,20 @@ public class Order {
         this.updatedAt = updatedAt;
     }
 
-    public User getUser() {
-        return user;
+    public Client getClient() {
+        return client;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Cooperative getCooperative() {
+        return cooperative;
+    }
+
+    public void setCooperative(Cooperative cooperative) {
+        this.cooperative = cooperative;
     }
 
     public List<OrderItem> getOrderItems() {
@@ -333,28 +367,5 @@ public class Order {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
-    }
-
-    // Helper methods
-    public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
-        orderItem.setOrder(this);
-    }
-
-    public void removeOrderItem(OrderItem orderItem) {
-        orderItems.remove(orderItem);
-        orderItem.setOrder(null);
-    }
-
-    public boolean isCompleted() {
-        return status == OrderStatus.DELIVERED;
-    }
-
-    public boolean isCancelled() {
-        return status == OrderStatus.CANCELLED || status == OrderStatus.REFUNDED || status == OrderStatus.RETURNED;
-    }
-
-    public boolean canBeCancelled() {
-        return status == OrderStatus.PENDING || status == OrderStatus.CONFIRMED;
     }
 }

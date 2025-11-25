@@ -28,4 +28,6 @@ public interface CooperativeService {
     Cooperative updateCooperative(UUID cooperativeId, CooperativeDTO dto);
 
     DesignerBasicDTO getDesignerProfile(UUID designerId);
+
+    Object countAllCooperatives();
 }

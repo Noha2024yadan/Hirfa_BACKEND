@@ -87,4 +87,9 @@ public class ClientService {
     public Page<Client> findAllClients(Pageable pageable) {
         return clientRepository.findAll(pageable);
     }
+
+    public long countAllClients() {
+        return clientRepository.count();
+    }
+
 }

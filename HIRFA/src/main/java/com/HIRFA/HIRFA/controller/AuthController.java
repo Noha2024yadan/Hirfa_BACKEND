@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.controller;
 
 import com.HIRFA.HIRFA.dto.LoginRequest;
-import com.HIRFA.HIRFA.entity.User;
 import com.HIRFA.HIRFA.security.CustomUserDetails;
 import com.HIRFA.HIRFA.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,22 +30,20 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+                        loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
+
         String jwt = jwtUtils.generateJwtToken(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        User user = userDetails.getUser();
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("token", jwt);
-        response.put("userType", user.getUserType().name());
-        response.put("userId", user.getUserId());
-        response.put("username", user.getUsername());
-        
+        response.put("role", userDetails.getRole()); // assuming you have getRole() in CustomUserDetails
+        response.put("userId", userDetails.getId());
+        response.put("username", userDetails.getUsername());
+        response.put("email", userDetails.getEmail());
+
         return ResponseEntity.ok(response);
     }
 
@@ -56,18 +53,17 @@ public class AuthController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(401).body("Not authenticated");
         }
-        
+
         Object principal = authentication.getPrincipal();
-        if (principal instanceof CustomUserDetails) {
-            User user = ((CustomUserDetails) principal).getUser();
+        if (principal instanceof CustomUserDetails userDetails) {
             Map<String, Object> response = new HashMap<>();
-            response.put("userType", user.getUserType().name());
-            response.put("userId", user.getUserId());
-            response.put("username", user.getUsername());
-            response.put("email", user.getEmail());
+            response.put("role", userDetails.getRole());
+            response.put("userId", userDetails.getId());
+            response.put("username", userDetails.getUsername());
+            response.put("email", userDetails.getEmail());
             return ResponseEntity.ok(response);
         }
-        
+
         return ResponseEntity.status(401).body("Invalid authentication");
     }
 }

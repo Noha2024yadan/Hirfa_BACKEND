@@ -56,9 +56,6 @@ public class Product {
 
     private String reportedReason;
 
-    @ManyToOne
-    private User reportedBy;
-
     private LocalDateTime reportedAt;
 
     private boolean isAvailable;
@@ -77,4 +74,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Default
     private List<Image> images = new ArrayList<>();
+
+    public void setReportedBy(String reporterInfo) {
+        throw new UnsupportedOperationException("Unimplemented method 'setReportedBy'");
+    }
 }

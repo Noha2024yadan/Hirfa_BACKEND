@@ -1,5 +1,6 @@
 package com.HIRFA.HIRFA.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -13,8 +14,8 @@ public class UserActivityDto {
     private String details;
     private LocalDateTime activityTime;
 
-    public UserActivityDto(String username, String email, LocalDateTime lastLogin, 
-                          String activityType, String details) {
+    public UserActivityDto(String username, String email, LocalDateTime lastLogin,
+            String activityType, String details) {
         this.username = username;
         this.email = email;
         this.lastLogin = lastLogin;
@@ -69,5 +70,9 @@ public class UserActivityDto {
 
     public void setActivityTime(LocalDateTime activityTime) {
         this.activityTime = activityTime;
+    }
+
+    public LocalDate getDerniereConnexion() {
+        throw new UnsupportedOperationException("Unimplemented method 'getDerniereConnexion'");
     }
 }

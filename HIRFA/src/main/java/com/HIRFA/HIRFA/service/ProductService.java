@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.service;
 
 import com.HIRFA.HIRFA.entity.Product;
-import com.HIRFA.HIRFA.entity.User;
 import com.HIRFA.HIRFA.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,46 +48,44 @@ public class ProductService {
         return productRepository.findByIsReportedTrue(pageable);
     }
 
-    // Report a product
-    public Product reportProduct(UUID productId, String reason, User reportedBy) {
+    // Report a product (no User class)
+    public Product reportProduct(UUID productId, String reason, String reporterInfo) {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
             product.setReported(true);
             product.setReportedReason(reason);
-            product.setReportedBy(reportedBy);
+            product.setReportedBy(reporterInfo);
             product.setReportedAt(LocalDateTime.now());
             return productRepository.save(product);
         }
         return null;
     }
 
-    // Approve reported product (unreport)
+    // Approve reported product
     public Product approveProduct(UUID productId) {
-        Optional<Product> productOpt = productRepository.findById(productId);
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
+        return productRepository.findById(productId).map(product -> {
             product.setReported(false);
             product.setReportedReason(null);
             product.setReportedBy(null);
             product.setReportedAt(null);
             return productRepository.save(product);
-        }
-        return null;
+        }).orElse(null);
     }
 
-    // Reject reported product (disable)
+    // Reject reported product
     public Product rejectProduct(UUID productId) {
-        Optional<Product> productOpt = productRepository.findById(productId);
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
+        return productRepository.findById(productId).map(product -> {
             product.setAvailable(false);
             product.setReported(false);
             product.setReportedReason(null);
             product.setReportedBy(null);
             product.setReportedAt(null);
             return productRepository.save(product);
-        }
-        return null;
+        }).orElse(null);
+    }
+
+    public long countAllProducts() {
+        return productRepository.count();
     }
 }

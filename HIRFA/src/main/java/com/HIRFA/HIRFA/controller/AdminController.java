@@ -1,7 +1,6 @@
 package com.HIRFA.HIRFA.controller;
 
 import com.HIRFA.HIRFA.entity.*;
-
 import com.HIRFA.HIRFA.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,9 +20,6 @@ import java.util.UUID;
 @PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin(origins = "*")
 public class AdminController {
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private ClientService clientService;
@@ -41,129 +36,27 @@ public class AdminController {
     @Autowired
     private DesignService designService;
 
-    // 🔹 Get all users with pagination and filtering
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllUsers(
+    // 🔹 Get all cooperatives with optional filtering
+    @GetMapping("/cooperatives")
+    public ResponseEntity<?> getAllCooperatives(
+            @RequestParam(required = false) Boolean verified,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "dateCreation,desc") String[] sort,
-            @RequestParam(required = false) UserType userType,
-            @RequestParam(required = false) Boolean enabled,
-            @RequestParam(required = false) String search) {
-
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            Pageable pageable = PageRequest.of(page, size, parseSort(sort));
-            Page<User> usersPage = userService.findAllUsers(userType, enabled, search, pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreation"));
+            Page<Cooperative> cooperativesPage = cooperativeService.findAllCooperatives(verified, pageable);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("users", usersPage.getContent());
-            response.put("currentPage", usersPage.getNumber());
-            response.put("totalItems", usersPage.getTotalElements());
-            response.put("totalPages", usersPage.getTotalPages());
+            response.put("cooperatives", cooperativesPage.getContent());
+            response.put("currentPage", cooperativesPage.getNumber());
+            response.put("totalItems", cooperativesPage.getTotalElements());
+            response.put("totalPages", cooperativesPage.getTotalPages());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to fetch users: " + e.getMessage(), "FETCH_USERS_FAILED"));
-        }
-    }
-
-    // 🔹 Get user by ID
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable UUID userId) {
-        try {
-            User user = userService.findUserById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse(e.getMessage(), "USER_NOT_FOUND"));
-        }
-    }
-
-    // 🔹 Update user status (enable/disable)
-    @PutMapping("/users/{userId}/status")
-    public ResponseEntity<?> updateUserStatus(
-            @PathVariable UUID userId,
-            @RequestParam boolean enabled) {
-        try {
-            User user = userService.updateUserStatus(userId, enabled);
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to update user status: " + e.getMessage(),
-                            "UPDATE_STATUS_FAILED"));
-        }
-    }
-
-    // 🔹 Delete user
-    @DeleteMapping("/users/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable UUID userId) {
-        try {
-            userService.deleteUser(userId);
-            return ResponseEntity.ok(createSuccessResponse("User deleted successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to delete user: " + e.getMessage(), "DELETE_USER_FAILED"));
-        }
-    }
-
-    // 🔹 Get system statistics
-    @GetMapping("/statistics")
-    public ResponseEntity<?> getSystemStatistics(
-            @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
-        try {
-            Map<String, Object> stats = new HashMap<>();
-
-            // User statistics
-            stats.put("totalUsers", userService.countAllUsers());
-            stats.put("totalClients", userService.countUsersByType(UserType.CLIENT));
-            stats.put("totalDesigners", userService.countUsersByType(UserType.DESIGNER));
-            stats.put("totalCooperatives", userService.countUsersByType(UserType.COOPERATIVE));
-
-            // Active users
-            stats.put("activeUsersToday", userService.countActiveUsersToday());
-            stats.put("newUsersThisWeek", userService.countNewUsersThisWeek());
-
-            // Verification stats
-            stats.put("verifiedCooperatives", cooperativeService.countByStatutVerification("VERIFIED"));
-            stats.put("pendingCooperatives", cooperativeService.countByStatutVerification("PENDING"));
-
-            return ResponseEntity.ok(stats);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to fetch statistics: " + e.getMessage(), "STATS_FETCH_FAILED"));
-        }
-    }
-
-    // 🔹 Get recent activities
-    @GetMapping("/activities")
-    public ResponseEntity<?> getRecentActivities(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timestamp"));
-            return ResponseEntity.ok(userService.getRecentActivities(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to fetch activities: " + e.getMessage(),
-                            "ACTIVITIES_FETCH_FAILED"));
-        }
-    }
-
-    // 🔹 Search users
-    @GetMapping("/search")
-    public ResponseEntity<?> searchUsers(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            return ResponseEntity.ok(userService.searchUsers(query, pageable));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Search failed: " + e.getMessage(), "SEARCH_FAILED"));
+                    .body(createErrorResponse("Failed to fetch cooperatives: " + e.getMessage(),
+                            "FETCH_COOPERATIVES_FAILED"));
         }
     }
 
@@ -182,22 +75,6 @@ public class AdminController {
         }
     }
 
-    // 🔹 Get all cooperatives with optional filtering
-    @GetMapping("/cooperatives")
-    public ResponseEntity<?> getAllCooperatives(
-            @RequestParam(required = false) Boolean verified,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreation"));
-            return ResponseEntity.ok(cooperativeService.findAllCooperatives(verified, pageable));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body(createErrorResponse("Failed to fetch cooperatives: " + e.getMessage(),
-                            "FETCH_COOPERATIVES_FAILED"));
-        }
-    }
-
     // 🔹 Get all designers with optional filtering
     @GetMapping("/designers")
     public ResponseEntity<?> getAllDesigners(
@@ -206,7 +83,15 @@ public class AdminController {
             @RequestParam(required = false) String specialite) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreation"));
-            return ResponseEntity.ok(designerService.findAllDesigners(specialite, pageable));
+            Page<Designer> designersPage = designerService.findAllDesigners(specialite, pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("designers", designersPage.getContent());
+            response.put("currentPage", designersPage.getNumber());
+            response.put("totalItems", designersPage.getTotalElements());
+            response.put("totalPages", designersPage.getTotalPages());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(createErrorResponse("Failed to fetch designers: " + e.getMessage(),
@@ -221,7 +106,15 @@ public class AdminController {
             @RequestParam(defaultValue = "10") int size) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreation"));
-            return ResponseEntity.ok(clientService.findAllClients(pageable));
+            Page<Client> clientsPage = clientService.findAllClients(pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("clients", clientsPage.getContent());
+            response.put("currentPage", clientsPage.getNumber());
+            response.put("totalItems", clientsPage.getTotalElements());
+            response.put("totalPages", clientsPage.getTotalPages());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(createErrorResponse("Failed to fetch clients: " + e.getMessage(), "FETCH_CLIENTS_FAILED"));
@@ -344,16 +237,29 @@ public class AdminController {
         }
     }
 
-    // Helper method to parse sort parameters
-    private Sort parseSort(String[] sort) {
-        if (sort.length >= 2) {
-            return Sort.by(Sort.Direction.fromString(sort[1]), sort[0]);
-        } else if (sort.length == 1) {
-            return Sort.by(sort[0]).descending();
+    // 🔹 Get system statistics (based on other entities)
+    @GetMapping("/statistics")
+    public ResponseEntity<?> getSystemStatistics() {
+        try {
+            Map<String, Object> stats = new HashMap<>();
+
+            stats.put("totalClients", clientService.countAllClients());
+            stats.put("totalDesigners", designerService.countAllDesigners());
+            stats.put("totalCooperatives", cooperativeService.countAllCooperatives());
+            stats.put("totalProducts", productService.countAllProducts());
+            stats.put("totalDesigns", designService.countAllDesigns());
+
+            stats.put("verifiedCooperatives", cooperativeService.countByStatutVerification("VERIFIED"));
+            stats.put("pendingCooperatives", cooperativeService.countByStatutVerification("PENDING"));
+
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(createErrorResponse("Failed to fetch statistics: " + e.getMessage(), "STATS_FETCH_FAILED"));
         }
-        return Sort.by("dateCreation").descending();
     }
 
+    // Helper methods
     private Map<String, Object> createSuccessResponse(String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
